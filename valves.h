@@ -1,22 +1,26 @@
 #ifndef VALVES_H_
 #define VALVES_H_
+
 #include "LiquidCrystal.h" 
 
 #define valves 4
 
 class Valve_Controll{
     private:
+
         int valve_state[valves];
         long unsigned int valve_time[valves];    
-        unsigned int valve_interval[valves];
+        long unsigned int valve_interval[valves];
+        int valve_inttt;
 
     public:
-        // int valveSwitch(long unsigned int currentTime, long unsigned int *valveTime,
-        //  int valveInterval, int valveState);
+
         void valveSwitch(long unsigned int currentTime, int valveNumber, int* vState);
 
         void valveInvervalSetter(int valve_interval, int valve_number);
-        unsigned int* valveInvervalGetter();
+        long unsigned int* valveInvervalGetter();
+
+        int valveInttGetter();
 
         void valveStateSetter(int* vState);
 
@@ -25,8 +29,6 @@ class Valve_Controll{
         void valveStateSetter(int valve_number, int valve_state);
         int* valveStateGetter();
 
-
-        
 };
 
 #endif

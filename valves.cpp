@@ -28,7 +28,7 @@ int* Valve_Controll::valveStateGetter(){
     return valve_state;
 }
 
-unsigned int* Valve_Controll::valveInvervalGetter(){
+long unsigned int* Valve_Controll::valveInvervalGetter(){
     return valve_interval;
 }
 
@@ -36,5 +36,10 @@ void Valve_Controll::valveInvervalSetter(int valveInterval, int valveNumber){
 
         /* code */
         valve_interval[valveNumber] = valveInterval * 60000;
+        //valve_inttt = valveInterval * 60000;
 
 }
+
+// int Valve_Controll::valveInttGetter(){
+//     return valve_inttt;
+// }

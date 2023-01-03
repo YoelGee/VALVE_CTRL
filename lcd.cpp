@@ -111,9 +111,9 @@ void LCD_controll::MoveCursorDown(int CLx){
 void LCD_controll::ValveControll(int x, int y){
     lcd.clear();
     lcd.setCursor(0,1);
-    lcd.print("L 2 CONF");
-    lcd.setCursor(9,1);
-    lcd.print("R 4 STE");
+    lcd.print("L 2 CON");
+    lcd.setCursor(8,1);
+    lcd.print("R 4 STA");
 
     if(x==0 && y == 0){
 
@@ -151,12 +151,13 @@ void LCD_controll::ValveControll(int x, int y){
 
 void LCD_controll::ValveInput(int x, int CLx, int CLy){
     ValveControll(CLx,CLy);
+
     if(x<60){
     //right
     state=6;
-    StateInput(x,CLx,CLy);
-    
+    StateInput(x,CLx,CLy);  
   }
+  
     else if(x<200){
     //up
     temp_valve_timer[state-1] = temp_valve_timer[state-1]+1;
@@ -175,10 +176,7 @@ void LCD_controll::ValveInput(int x, int CLx, int CLy){
     valve_timer[state-1] = temp_valve_timer[state-1];
     lcd.clear();
     runningLCD();
-   // lcd.setCursor(0,0);
-    //  lcd.print(valve_timer[state-1]);
-    //   lcd.setCursor(0,1);
-    //  lcd.print(temp_valve_timer[state-1]);
+   
     timeChange = true;
     state = 5;
   }
@@ -332,7 +330,7 @@ int LCD_controll::StateGetter(){
     return state;
 }
 
-unsigned int* LCD_controll::vtGetter() {
+long unsigned int* LCD_controll::vtGetter() {
     return valve_timer;
 }
 

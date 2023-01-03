@@ -8,19 +8,21 @@
 
 class LCD_controll{
     private:
-        LiquidCrystal lcd;
-        int cursor_location[pointer];
-        unsigned int valve_timer[valves];
-        int temp_valve_timer[valves];
 
+        LiquidCrystal lcd;
+
+        int cursor_location[pointer];
+        long unsigned int valve_timer[valves];
+        int temp_valve_timer[valves];
+        int v_state[valves];
+        int temp_v_state[valves];
+        int temp;
+        int state;
         bool timeChange;
         bool stateMode;
 
-        int v_state[valves];
-        int temp_v_state[valves];
+        
 
-        int temp;
-        int state;
     public:
     
        void initialCursor();
@@ -48,7 +50,7 @@ class LCD_controll{
         int* CursorGetter();
 
        void vtSetter(unsigned int* valve_timer);
-        unsigned int* vtGetter();
+       long unsigned int* vtGetter();
 
        void ValveInput(int x, int CLx, int CLy);
         void StateInput(int x, int CLx, int CLy);
