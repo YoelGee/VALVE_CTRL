@@ -11,7 +11,6 @@ class Valve_Controll{
         int valve_state[valves];
         long unsigned int valve_time[valves];    
         long unsigned int valve_interval[valves];
-        int valve_inttt;
 
     public:
 

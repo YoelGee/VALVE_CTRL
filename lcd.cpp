@@ -2,12 +2,13 @@
 #include "LiquidCrystal.h" 
 //check different values for each button
 
-
+//Initialzes the LCD controll pins
 LCD_controll::LCD_controll():lcd(8,9,4,5,6,7){
     lcd.begin(16,2);
     lcd.clear();
 }
 
+//Function used to set the cursor to it's initial position.
 void LCD_controll::initialCursor(){
     lcd.setCursor(0,0);
     lcd.print(">");
@@ -15,6 +16,7 @@ void LCD_controll::initialCursor(){
     cursor_location[1] = 0;
 }
 
+//Function used in main menu display, as well as within the cursor movement functions.
 void LCD_controll::startLCD(){
     lcd.clear();
     lcd.setCursor(1,0);
@@ -27,9 +29,9 @@ void LCD_controll::startLCD(){
     lcd.print("Valve4");
 }
 
-void LCD_controll::MoveCursorRight(int CLy){
+void LCD_controll::MoveCursorRight(){
     
-    if(CLy == 0 && CursorGetter()[0] == 0){
+    if(cursor_location[1] == 0 && cursor_location[0] == 0){
     lcd.clear();
     startLCD();
     lcd.setCursor(8,0);
@@ -37,7 +39,7 @@ void LCD_controll::MoveCursorRight(int CLy){
     cursor_location[0]= 8;
     cursor_location[1] = 0;
     }
-    else if(CLy == 1 &&  CursorGetter()[0] == 0){
+    else if(cursor_location[1] == 1 &&  cursor_location[0] == 0){
     lcd.clear();
     startLCD();
     lcd.setCursor(8,1);
@@ -47,8 +49,8 @@ void LCD_controll::MoveCursorRight(int CLy){
     }
 }
 
-void LCD_controll::MoveCursorLeft(int CLy){
-    if(CLy == 0 && CursorGetter()[0] == 8){
+void LCD_controll::MoveCursorLeft(){
+    if(cursor_location[1] == 0 && cursor_location[0] == 8){
     lcd.clear();
     startLCD();
     lcd.setCursor(0,0);
@@ -56,7 +58,7 @@ void LCD_controll::MoveCursorLeft(int CLy){
     cursor_location[0]= 0;
     cursor_location[1] = 0;
     }
-    else if(CLy == 1 && CursorGetter()[0] == 8){
+    else if(cursor_location[1] == 1 && cursor_location[0] == 8){
     lcd.clear();
     startLCD();
     lcd.setCursor(0,1);
@@ -66,54 +68,52 @@ void LCD_controll::MoveCursorLeft(int CLy){
     }
 }
 
-void LCD_controll::MoveCursorUp(int CLx){
-    if(CLx == 0 && CursorGetter()[1] == 1){
+void LCD_controll::MoveCursorUp(){
+    if(cursor_location[0] == 0 && cursor_location[1] == 1){
     lcd.clear();
     startLCD();
-    lcd.setCursor(CLx,0);
+    lcd.setCursor(cursor_location[0],0);
     lcd.print(">");
      cursor_location[0]= 0;
     cursor_location[1] = 0;
     }
-    else if(CLx == 8 && CursorGetter()[1] == 1){
+    else if(cursor_location[0] == 8 && cursor_location[1] == 1){
     lcd.clear();
     startLCD();
-    lcd.setCursor(CLx,0);
+    lcd.setCursor(cursor_location[0],0);
     lcd.print(">");
     cursor_location[0]= 8;
     cursor_location[1] = 0;
     }
 }
 
-void LCD_controll::MoveCursorDown(int CLx){
-    if(CLx == 0 && CursorGetter()[1] == 0){
+void LCD_controll::MoveCursorDown(){
+    if(cursor_location[0] == 0 && cursor_location[1] == 0){
     lcd.clear();
     startLCD();
-    lcd.setCursor(CLx,1);
+    lcd.setCursor(cursor_location[0],1);
     lcd.print(">");
     cursor_location[0]= 0;
     cursor_location[1] = 1;
     }
-    else if(CLx == 8 && CursorGetter()[1] == 0 ){
+    else if(cursor_location[0] == 8 && cursor_location[1] == 0 ){
     lcd.clear();
     startLCD();
-    lcd.setCursor(CLx,1);
+    lcd.setCursor(cursor_location[0],1);
     lcd.print(">");
     cursor_location[0]= 8;
     cursor_location[1] = 1;
     }
 }
 
-/// @brief 
-/// @param x 
-/// @param y /
 
+//Function used to display valve settings. Sets the display state to its appropriate valve using the cursors x,y coordinates
 void LCD_controll::ValveControll(int x, int y){
     lcd.clear();
     lcd.setCursor(0,1);
-    lcd.print("L 2 CON");
+    lcd.print("L2CON");
     lcd.setCursor(8,1);
-    lcd.print("R 4 STA");
+    lcd.print("R4STA");
 
     if(x==0 && y == 0){
 
@@ -154,10 +154,9 @@ void LCD_controll::ValveInput(int x, int CLx, int CLy){
 
     if(x<60){
     //right
-    state=6;
     StateInput(x,CLx,CLy);  
+
   }
-  
     else if(x<200){
     //up
     temp_valve_timer[state-1] = temp_valve_timer[state-1]+1;
@@ -176,12 +175,13 @@ void LCD_controll::ValveInput(int x, int CLx, int CLy){
     valve_timer[state-1] = temp_valve_timer[state-1];
     lcd.clear();
     runningLCD();
-   
     timeChange = true;
     state = 5;
+
   }
   else if(x<800){
     //select
+    ValveControll(CLx,CLy);
   }
 }
 
@@ -196,17 +196,17 @@ int* LCD_controll::ValveStateGetter(){
 void LCD_controll::StateControll(int x, int y){
     stateMode=true;
     lcd.clear();
-    lcd.setCursor(0,1);
+    lcd.setCursor(5,1);
+    lcd.print("SEL 2 CON");
 
+    lcd.setCursor(0,1);
     if(temp_v_state[state-1] == 1){
-    
         lcd.print("HIGH");
     }
-    else{
-
+    else if (temp_v_state[state-1] == 0){
         lcd.print("LOW");
-
     }
+
     lcd.setCursor(0,0);
     if(x==0 && y == 0){
 
@@ -260,6 +260,7 @@ void LCD_controll::StateInput(int x, int CLx, int CLy){
 }
 
 void LCD_controll::runningLCD(){
+    lcd.clear();
     lcd.setCursor(0,0);
     lcd.print("V1=");
     lcd.print(valve_timer[0]);
@@ -273,7 +274,7 @@ void LCD_controll::runningLCD(){
     lcd.print("V4=");
     lcd.print(valve_timer[3]);
     lcd.setCursor(5,1);
-    lcd.print("exit on up");
+    lcd.print("exit on up ");
     lcd.print(valve_timer[3]);
 }
 
@@ -306,19 +307,19 @@ void LCD_controll::ReadRunning(int x){
 void LCD_controll::ReadInput(int x){
     if(x<60 && state==0){
     //right
-    MoveCursorRight(cursor_location[1]);
+    MoveCursorRight();
   }
   else if(x<200 && state==0){
     //up
-     MoveCursorUp(cursor_location[0]);
+     MoveCursorUp();
   }
   else if (x<400 && state==0){
     //down
-    MoveCursorDown(cursor_location[0]);
+    MoveCursorDown();
   }
   else if(x<600 && state==0){
     //left
-    MoveCursorLeft(cursor_location[1]);
+    MoveCursorLeft();
   }
   else if(x<800 && state==0){
     //select
@@ -338,18 +339,3 @@ int* LCD_controll::CursorGetter(){
     return cursor_location;
 }
 
-void LCD_controll::CursorSetter(int* cursor_location){
-
-    for (int i=0; i<pointer; i++){
-        this->cursor_location[i] = cursor_location[i];
-    }
-}
-
-// int Valve_Controll::valveSwitch(long unsigned int currentTime, long unsigned int* valveTime, int valveInterval, int valveState){
-//   if(currentTime - *valveTime >= valveInterval && valve_interval != 0){
-    
-//     valve_time[] = currentTime;
-//     valveState = !valveState;
-//     return valveState;
-//   }
-// }

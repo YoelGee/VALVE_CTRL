@@ -12,7 +12,6 @@ Valve_Controll valve;
 
 long unsigned int current_time;
 
-//const int* valve_timers = start.vtGetter();
 
 void setup() {
   // put your setup code here, to run once:
