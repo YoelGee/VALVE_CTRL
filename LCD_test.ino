@@ -1,17 +1,19 @@
 #include "lcd.h"
 #include "valves.h"
 
-#define valve_1_PIN 50
-#define valve_2_PIN 51
-#define valve_3_PIN 52
-#define valve_4_PIN 53
-
 LCD_controll start;
 
 Valve_Controll valve;
 
-long unsigned int current_time;
+bool launch = false;
 
+long unsigned int current_time;
+long unsigned int temp_current_time;
+
+void timer(long unsigned int currentTime){
+  temp_current_time = currentTime;
+  launch = true;
+}
 
 void setup() {
   // put your setup code here, to run once:
@@ -32,8 +34,8 @@ void loop() {
 
   if(start.StateGetter() == 0 && !(start.StateModeGetter()))
   {
-
-    current_time=0;
+    launch = false;
+    //current_time=0;
     start.ReadInput(x);
     delay(100);
 
@@ -41,7 +43,8 @@ void loop() {
   else if(start.StateGetter() >= 1 && start.StateGetter() < 5 && !(start.StateModeGetter()))
   {
 
-    current_time=0;
+    //current_time=0;
+    launch = false;
     start.ValveInput(x,start.CursorGetter()[0],
     start.CursorGetter()[1]);
     delay(250);
@@ -53,11 +56,20 @@ void loop() {
     start.StateInput(x, start.CursorGetter()[0],
     start.CursorGetter()[1]);
     delay(200);
+    Serial.println(start.StateGetter());
 
   }
 
   else if(start.StateGetter() == 5 && !(start.StateModeGetter())){
     current_time = millis();
+
+
+    if(!launch){
+      timer(current_time);
+    }
+
+    current_time = current_time - temp_current_time;
+    
     start.ReadRunning(x);
 
   for(int i = 0; i<valves; i++){
@@ -65,8 +77,10 @@ void loop() {
     if(start.vtGetter()[i] > 0){
     valve.valveStateSetter(i, start.ValveStateGetter()[i]);
     valve.valveInvervalSetter(start.vtGetter()[i], i);
-    valve.valveSwitch(current_time, i, start.ValveStateGetter());}
-    
+    valve.valveSwitch(current_time, i, start.ValveStateGetter(), start.tempValveStateGetter());
+
+
+    }
   }
 
   digitalWrite(valve_1_PIN, valve.valveStateGetter()[0]);
@@ -76,28 +90,33 @@ void loop() {
 
   Serial.print("current time = ");
   Serial.println(current_time);
-  for(int i=1 ; i<=valves; i++) {
-
+  // for(int i=1 ; i<=valves; i++) {
   Serial.print("valve ");
-  Serial.print(i);
+  Serial.print(1);
 
-  Serial.print(" time = ");
-  Serial.println(valve.valveTimeGetter()[i-1]);
+  // Serial.print(" time = ");
+  // Serial.println(valve.valveTimeGetter()[0]);
 
-  Serial.print(" min = ");
-  Serial.println(start.vtGetter()[i-1]);
+  // Serial.print(" min = ");
+  // Serial.println(start.vtGetter()[0]);
 
-  // Serial.print(" test Interval = ");
-  // Serial.println(valve.valveInttGetter());
+  // // Serial.print(" test Interval = ");
+  // // Serial.println(valve.valveInttGetter());
 
-  Serial.print(" interval = ");
-  Serial.print(valve.valveInvervalGetter()[i-1]);
+  // Serial.print(" interval = ");
+  // Serial.print(valve.valveInvervalGetter()[0]);
 
-  Serial.print(" state = ");
-  Serial.println(valve.valveStateGetter()[i-1]);
+  Serial.print("valve.valveState state = ");
+  Serial.println(valve.valveStateGetter()[0]);
+  Serial.print("start.valveState state = ");
+  Serial.println(start.ValveStateGetter()[0]);
+  Serial.print("start.Temp valve State state = ");
+  Serial.println(start.tempValveStateGetter()[0]);
+
+  
   Serial.println("");
 
-  }
+  //}
 
   //delay(100);
   }

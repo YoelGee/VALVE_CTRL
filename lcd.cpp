@@ -185,13 +185,7 @@ void LCD_controll::ValveInput(int x, int CLx, int CLy){
   }
 }
 
-bool LCD_controll::StateModeGetter(){
-    return stateMode;
-}
 
-int* LCD_controll::ValveStateGetter(){
-    return v_state;
-}
 
 void LCD_controll::StateControll(int x, int y){
     stateMode=true;
@@ -339,3 +333,20 @@ int* LCD_controll::CursorGetter(){
     return cursor_location;
 }
 
+bool LCD_controll::StateModeGetter(){
+    return stateMode;
+}
+
+int* LCD_controll::ValveStateGetter(){
+    return v_state;
+}
+
+void LCD_controll::tempValveStateSetter(){
+    for(int i = 0; i<valves; i++){
+        temp_valve_timer[i] = v_state[i];
+    }
+}
+
+int* LCD_controll::tempValveStateGetter(){
+    return temp_v_state;
+}

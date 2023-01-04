@@ -91,6 +91,10 @@ class LCD_controll{
 
         int* CursorGetter();
 
+        void tempValveStateSetter();
+
+        int* tempValveStateGetter();
+
        void vtSetter(unsigned int* valve_timer);
        long unsigned int* vtGetter();
 

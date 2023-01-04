@@ -1,10 +1,15 @@
 #include "valves.h"
 
-void Valve_Controll::valveSwitch(long unsigned int currentTime, int valveNumber, int* vState){
+void Valve_Controll::valveSwitch(long unsigned int currentTime, int valveNumber, int* vState, int* tmpVS){
   if(currentTime - valve_time[valveNumber] >= valve_interval[valveNumber]){
     valve_time[valveNumber] = currentTime;
     valve_state[valveNumber] = !valve_state[valveNumber];
     vState[valveNumber] = !vState[valveNumber];
+    tmpVS[valveNumber] = !tmpVS[valveNumber];
+    state_changed = true;
+  }
+  else{
+  state_changed = false;
   }
 }
 
@@ -40,6 +45,12 @@ void Valve_Controll::valveInvervalSetter(int valveInterval, int valveNumber){
 
 }
 
+
+// bool Valve_Controll::stateChangeGetter(){
+
+//     return state_changed;
+
+// }
 // int Valve_Controll::valveInttGetter(){
 //     return valve_inttt;
 // }
