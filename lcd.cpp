@@ -190,10 +190,10 @@ void LCD_controll::ValveInput(int x, int CLx, int CLy){
 void LCD_controll::StateControll(int x, int y){
     stateMode=true;
     lcd.clear();
-    lcd.setCursor(5,1);
-    lcd.print("SEL 2 CON");
-
     lcd.setCursor(0,1);
+    lcd.print("SEL 2 CONFIRM");
+
+    lcd.setCursor(11,0);
     if(temp_v_state[state-1] == 1){
         lcd.print("HIGH");
     }

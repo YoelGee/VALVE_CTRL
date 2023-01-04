@@ -90,33 +90,33 @@ void loop() {
 
   Serial.print("current time = ");
   Serial.println(current_time);
-  // for(int i=1 ; i<=valves; i++) {
+  for(int i=1 ; i<=valves; i++) {
   Serial.print("valve ");
-  Serial.print(1);
+  Serial.print(i);
 
-  // Serial.print(" time = ");
-  // Serial.println(valve.valveTimeGetter()[0]);
+  Serial.print(" time = ");
+  Serial.println(valve.valveTimeGetter()[i-1]);
 
-  // Serial.print(" min = ");
-  // Serial.println(start.vtGetter()[0]);
+  Serial.print(" min = ");
+  Serial.println(start.vtGetter()[i-1]);
 
-  // // Serial.print(" test Interval = ");
-  // // Serial.println(valve.valveInttGetter());
+  // Serial.print(" test Interval = ");
+  // Serial.println(valve.valveInttGetter());
 
-  // Serial.print(" interval = ");
-  // Serial.print(valve.valveInvervalGetter()[0]);
+  Serial.print(" interval = ");
+  Serial.println(valve.valveInvervalGetter()[i-1]);
 
   Serial.print("valve.valveState state = ");
-  Serial.println(valve.valveStateGetter()[0]);
+  Serial.println(valve.valveStateGetter()[i-1]);
   Serial.print("start.valveState state = ");
-  Serial.println(start.ValveStateGetter()[0]);
+  Serial.println(start.ValveStateGetter()[i-1]);
   Serial.print("start.Temp valve State state = ");
-  Serial.println(start.tempValveStateGetter()[0]);
+  Serial.println(start.tempValveStateGetter()[i-1]);
 
   
   Serial.println("");
 
-  //}
+  }
 
   //delay(100);
   }
