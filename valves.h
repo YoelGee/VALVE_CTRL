@@ -18,14 +18,18 @@ class Valve_Controll{
         bool state_changed = false;
 
     public:
-
+        /// @brief Used to switch the PINMODE of the specific valve using millis() timer
+        //* takes current time and compared it to the ms interval and if condition holds states are flipped
+        /// @param currentTime how much time has passed since the valves started
+        /// @param valveNumber used to identify what valve is being changed
+        /// @param vState refrence pointers to an array of states the user set within the LCD_Controll class
+        /// @param tmpVS refrence pointers to the temporary array of states the user set within the LCD_Controll class
         void valveSwitch(long unsigned int currentTime, int valveNumber, int* vState, int* tmpVS);
 
         void valveInvervalSetter(int valve_interval, int valve_number);
         long unsigned int* valveInvervalGetter();
 
         int valveInttGetter();
-
         void valveStateSetter(int* vState);
 
         long unsigned int* valveTimeGetter();
