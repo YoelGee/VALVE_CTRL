@@ -12,8 +12,10 @@ class LCD_controll{
         LiquidCrystal lcd;
 
         int cursor_location[pointer];
-        long unsigned int valve_timer[valves];
-        int temp_valve_timer[valves];
+        long unsigned int valve_timer_on[valves];
+        long unsigned int valve_timer_off[valves];
+        int temp_valve_timer_on[valves];
+        int temp_valve_timer_off[valves];
         int v_state[valves];
         int temp_v_state[valves];
         int temp;
@@ -54,7 +56,8 @@ class LCD_controll{
         void ReadRunning(int x);
 
         //Function used to display valve settings. Sets the display state to its appropriate valve using the cursors x,y coordinates
-       void ValveControll(int CLx,int CLy);
+       void ValveControllON(int CLx,int CLy);
+       void ValveControllOFF(int CLx,int CLy);
 
         /// @brief Used to controll the valve timer as well as enter the valve state settings 
         //* Uses ValveControll function to display the valve settings information to the LCD
@@ -63,8 +66,8 @@ class LCD_controll{
         /// @param x analog pin being read
         /// @param CLx the last recorded x position of the cursor; saved within valve_coordinate variable
         /// @param CLy the last recorded y position of the cursor; saved within valve_coordinate variable
-       void ValveInput(int x, int CLx, int CLy);
-
+       void ValveInputON(int x, int CLx, int CLy);
+       void ValveInputOFF(int x, int CLx, int CLy);
         //Function used in StateInput for LCD display
         void StateControll(int CLx, int CLy);
 
@@ -96,8 +99,9 @@ class LCD_controll{
         int* tempValveStateGetter();
 
        void vtSetter(unsigned int* valve_timer);
-       long unsigned int* vtGetter();
 
+       long unsigned int* vtONGetter();
+       long unsigned int* vtOFFGetter();
        LCD_controll();
 
 };

@@ -1,20 +1,34 @@
 #include "valves.h"
 
 void Valve_Controll::valveSwitch(long unsigned int currentTime, int valveNumber, int* vState, int* tmpVS){
-  if(currentTime - valve_time[valveNumber] >= valve_interval[valveNumber]){
-    valve_time[valveNumber] = currentTime;
-    valve_state[valveNumber] = !valve_state[valveNumber];
-    vState[valveNumber] = !vState[valveNumber];
-    tmpVS[valveNumber] = !tmpVS[valveNumber];
-    state_changed = true;
+  if(valve_state[valveNumber] && state_changed_on == false && currentTime - valve_time_on[valveNumber] >= valve_on[valveNumber]){
+    valve_time_on[valveNumber] = currentTime;
+    valve_state[valveNumber] = 0;
+    vState[valveNumber] = 0;
+    tmpVS[valveNumber] = 0;
+    state_set = false;
+    state_changed_on = true;
+    state_changed_off = false;
   }
-  else{
-  state_changed = false;
+  else if(!valve_state[valveNumber] &&  state_changed_off == false && currentTime - valve_time_off[valveNumber] >= valve_off[valveNumber]){
+    valve_time_off[valveNumber] = currentTime;
+    valve_state[valveNumber] = 1;
+    vState[valveNumber] = 1;
+    tmpVS[valveNumber] = 1;
+    state_set = false;
+    state_changed_on = false;
+    state_changed_off = true;
   }
+ 
 }
 
-long unsigned int* Valve_Controll::valveTimeGetter(){
-    return valve_time;
+
+long unsigned int* Valve_Controll::valveTimeONGetter(){
+    return valve_time_on;
+}
+
+long unsigned int* Valve_Controll::valveTimeOFFGetter(){
+    return valve_time_off;
 }
 
 void Valve_Controll::valveStateSetter(int* vState){
@@ -33,19 +47,33 @@ int* Valve_Controll::valveStateGetter(){
     return valve_state;
 }
 
-long unsigned int* Valve_Controll::valveInvervalGetter(){
-    return valve_interval;
+long unsigned int* Valve_Controll::valveInvervalONGetter(){
+    return valve_on;
 }
 
-void Valve_Controll::valveInvervalSetter(int valveInterval, int valveNumber){
+long unsigned int* Valve_Controll::valveInvervalOFFGetter(){
+    return valve_off;
+}
 
+void Valve_Controll::valveInvervalONSetter(int valveInterval, int valveNumber){
         /* code */
-        valve_interval[valveNumber] = valveInterval * 60000;
+        valve_on[valveNumber] = valveInterval * 60000;
         //valve_inttt = valveInterval * 60000;
-
 }
 
+void Valve_Controll::valveInvervalOFFSetter(int valveInterval, int valveNumber){
+        /* code */
+        valve_off[valveNumber] = valveInterval * 60000;
+        //valve_inttt = valveInterval * 60000;
+}
 
+bool Valve_Controll::states_set(){
+    return state_set;
+}
+
+void Valve_Controll::states_set_bool(){
+    state_set = true;
+}
 // bool Valve_Controll::stateChangeGetter(){
 
 //     return state_changed;

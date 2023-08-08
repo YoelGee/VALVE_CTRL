@@ -11,11 +11,14 @@
 
 class Valve_Controll{
     private:
-
+        bool state_set = false;
         int valve_state[valves];
-        long unsigned int valve_time[valves];    
-        long unsigned int valve_interval[valves];
-        bool state_changed = false;
+        long unsigned int valve_time_on[valves];
+        long unsigned int valve_time_off[valves];
+        long unsigned int valve_on[valves];
+        long unsigned int valve_off[valves];
+        bool state_changed_on = false;
+        bool state_changed_off = false;
 
     public:
         /// @brief Used to switch the PINMODE of the specific valve using millis() timer
@@ -24,20 +27,28 @@ class Valve_Controll{
         /// @param valveNumber used to identify what valve is being changed
         /// @param vState refrence pointers to an array of states the user set within the LCD_Controll class
         /// @param tmpVS refrence pointers to the temporary array of states the user set within the LCD_Controll class
+
         void valveSwitch(long unsigned int currentTime, int valveNumber, int* vState, int* tmpVS);
 
-        void valveInvervalSetter(int valve_interval, int valve_number);
-        long unsigned int* valveInvervalGetter();
+        void valveInvervalONSetter(int valve_interval, int valve_number);
+        void valveInvervalOFFSetter(int valve_interval, int valve_number);
+        
+        long unsigned int* valveInvervalONGetter();
+        long unsigned int* valveInvervalOFFGetter();
 
         int valveInttGetter();
         void valveStateSetter(int* vState);
 
-        long unsigned int* valveTimeGetter();
+        long unsigned int* valveTimeONGetter();
+        long unsigned int* valveTimeOFFGetter();
 
         void valveStateSetter(int valve_number, int valve_state);
         int* valveStateGetter();
 
         bool stateChangeGetter();
+
+        bool states_set();
+        void states_set_bool();
 
 };
 
