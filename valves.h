@@ -12,6 +12,7 @@
 class Valve_Controll{
     private:
         bool state_set = false;
+        int itt[valves];
         int valve_state[valves];
         long unsigned int valve_time_on[valves];
         long unsigned int valve_time_off[valves];
@@ -28,7 +29,7 @@ class Valve_Controll{
         /// @param vState refrence pointers to an array of states the user set within the LCD_Controll class
         /// @param tmpVS refrence pointers to the temporary array of states the user set within the LCD_Controll class
 
-        void valveSwitch(long unsigned int currentTime, int valveNumber, int* vState, int* tmpVS);
+        void valveSwitch(long unsigned int currentTime, int valveNumber, int* vState, int* tmpVS, long unsigned int* ON, long unsigned int* OFF);
 
         void valveInvervalONSetter(int valve_interval, int valve_number);
         void valveInvervalOFFSetter(int valve_interval, int valve_number);

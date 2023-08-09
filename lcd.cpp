@@ -383,10 +383,12 @@ void LCD_controll::ReadRunning(int x){
   }
   else if(x<200){
     //up
+
     state = 0;
     lcd.clear();
-    startLCD();
     initialCursor();
+    startLCD();
+    
   }
   else if (x<400){
     //down
