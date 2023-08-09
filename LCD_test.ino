@@ -10,6 +10,10 @@ bool launch = false;
 long unsigned int current_time;
 long unsigned int temp_current_time;
 
+int valve[4][2];
+
+String parse_data;
+
 void timer(long unsigned int currentTime){
   temp_current_time = currentTime;
   launch = true;
@@ -28,6 +32,13 @@ void setup() {
 }
 
 void loop() {
+
+  if(Serial.available()){
+
+    parse_data = Serial.readStringUntil('\n');
+    
+
+  }
 
   int x = analogRead(0);
   //Serial.println(start.StateGetter());
@@ -76,7 +87,7 @@ void loop() {
     if(!launch){
       timer(current_time);
     }
-
+    
     current_time = current_time - temp_current_time;
     
     start.ReadRunning(x);
@@ -88,16 +99,19 @@ void loop() {
     valve.valveInvervalONSetter(start.vtONGetter()[i], i);
     valve.valveInvervalOFFSetter(start.vtOFFGetter()[i],i);
     valve.valveSwitch(current_time, i, start.ValveStateGetter(), start.tempValveStateGetter(), start.vtONGetter(),start.vtOFFGetter());
-
     }
   }
   
-  if(!valve.states_set()){
+  if(!valve.states_set() || start.stop()){
   digitalWrite(valve_1_PIN, valve.valveStateGetter()[0]);
   digitalWrite(valve_2_PIN, valve.valveStateGetter()[1]);
   digitalWrite(valve_3_PIN, valve.valveStateGetter()[2]);
   digitalWrite(valve_4_PIN, valve.valveStateGetter()[3]);
   valve.states_set_bool();
+  }
+  if(start.button_pressed()){
+    delay(250);
+    start.button_pr();
   }
   // Serial.print("current time = ");
   // Serial.println(current_time);

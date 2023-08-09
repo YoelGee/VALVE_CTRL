@@ -10,17 +10,19 @@ class LCD_controll{
     private:
 
         LiquidCrystal lcd;
-
+        int running_drop = 0;
         int cursor_location[pointer];
         long unsigned int valve_timer_on[valves];
         long unsigned int valve_timer_off[valves];
         int temp_valve_timer_on[valves];
         int temp_valve_timer_off[valves];
         int v_state[valves];
+        bool stop_pressed = false;
         int temp_v_state[valves];
         int temp;
         int state;
         bool timeChange;
+        bool button_p;
 
         //Used to ceate a condtion to prevent .ino from running mutiple things at once
         bool stateMode;
@@ -100,6 +102,10 @@ class LCD_controll{
 
        void vtSetter(unsigned int* valve_timer);
 
+        void reset();
+        bool stop();
+        bool button_pressed();
+        void button_pr();
        long unsigned int* vtONGetter();
        long unsigned int* vtOFFGetter();
        LCD_controll();

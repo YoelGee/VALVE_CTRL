@@ -310,8 +310,8 @@ void LCD_controll::StateInput(int x, int CLx, int CLy){
     if(x<60){
     //right
 
-    initialCursor();
     startLCD();
+    initialCursor();
     v_state[state-5] = temp_v_state[state-5];
     valve_timer_on[state-5] = temp_valve_timer_on[state-5];
     valve_timer_off[state-5] = temp_valve_timer_off[state-5];
@@ -354,35 +354,76 @@ void LCD_controll::StateInput(int x, int CLx, int CLy){
 void LCD_controll::runningLCD(){
     lcd.clear();
     lcd.setCursor(0,0);
-    lcd.print("V1=");
-    lcd.print(valve_timer_on[0]);
-    lcd.print("/");
-    lcd.print(valve_timer_off[0]);
-    lcd.print(v_state[0]);
-
-    lcd.setCursor(9,0);
-    lcd.print("V2=");
-    lcd.print(valve_timer_on[1]);
-    lcd.print("/");
-    lcd.print(valve_timer_off[1]);
-    lcd.print("s");
-    lcd.print(v_state[1]);
-
-    lcd.setCursor(0,1);
-    lcd.print("V3=");
-    lcd.print(valve_timer_on[2]);
-    lcd.print("/");
-    lcd.print(valve_timer_off[2]);
-    lcd.print("s");
-    lcd.print(v_state[2]);
-  
-    lcd.setCursor(9,1);
-    lcd.print("V4=");
-    lcd.print(valve_timer_on[3]);
-    lcd.print("/");
-    lcd.print(valve_timer_off[3]);
-    lcd.print("s");
-    lcd.print(v_state[3]);
+    switch(running_drop){
+      case 0:
+        lcd.clear();
+        lcd.print("V1ON=");
+        lcd.print(valve_timer_on[0]);
+        lcd.setCursor(8,0);
+        lcd.print("V1OFF=");
+        lcd.print(valve_timer_off[0]);
+        lcd.setCursor(0,1);
+        lcd.print("STATE=");
+        if(v_state[0])
+        lcd.print("ON");
+        else if(!v_state[0])
+        lcd.print("OFF");
+        lcd.setCursor(10,1);
+        lcd.print("^ v");
+        break;
+      case 1:
+        lcd.clear();
+        lcd.print("V2ON=");
+        lcd.print(valve_timer_on[1]);
+        lcd.setCursor(8,0);
+        lcd.print("V2OFF=");
+        lcd.print(valve_timer_off[1]);
+        lcd.setCursor(0,1);
+        lcd.print("STATE=");
+        if(v_state[1])
+        lcd.print("ON");
+        else if(!v_state[1])
+        lcd.print("OFF");
+        lcd.setCursor(10,1);
+        lcd.print("^ v");
+        break;
+      case 2:
+        lcd.clear();
+        lcd.print("V3ON=");
+        lcd.print(valve_timer_on[2]);
+        lcd.setCursor(8,0);
+        lcd.print("V3OFF=");
+        lcd.print(valve_timer_off[2]);
+        lcd.setCursor(0,1);
+        lcd.print("STATE=");
+        if(v_state[2])
+        lcd.print("ON");
+        else if(!v_state[2])
+        lcd.print("OFF");
+        lcd.setCursor(10,1);
+        lcd.print("^ v");
+        break;
+      case 3:
+        lcd.print("V4ON=");
+        lcd.print(valve_timer_on[3]);
+        lcd.setCursor(8,0);
+        lcd.print("V4OFF=");
+        lcd.print(valve_timer_off[3]);
+        lcd.setCursor(0,1);
+        lcd.print("STATE=");
+        if(v_state[3])
+        lcd.print("ON");
+        else if(!v_state[3])
+        lcd.print("OFF");
+        lcd.setCursor(10,1);
+        lcd.print("^ v");
+        break;
+      case 4:
+        lcd.setCursor(0,0);
+        lcd.print("Press RST to");
+        lcd.setCursor(0,1);
+        lcd.print("EXIT and STOP");
+    }
     lcd.setCursor(13,1);
     //lcd.print("x-u ");
 }
@@ -395,15 +436,19 @@ void LCD_controll::ReadRunning(int x){
   }
   else if(x<200){
     //up
-
-    state = 0;
-    lcd.clear();
-    initialCursor();
-    startLCD();
+    button_p = true;
+    if(running_drop > 0){
+    running_drop--;
+    }
+    runningLCD();
 
   }
   else if (x<400){
     //down
+    button_p = true;
+    if(running_drop < 4){
+      running_drop++;
+    }
     runningLCD();
   }
   else if(x<600){
@@ -412,7 +457,21 @@ void LCD_controll::ReadRunning(int x){
   }
   else if(x<800){
     //select
-    runningLCD();
+    //button_p = true;
+    // if(running_drop == 4){
+    //   reset();
+    //   stop_pressed = true;
+    //   running_drop = 0;
+    //   lcd.clear();
+    //   startLCD();
+    //   initialCursor();
+    //   stop_pressed = false;
+    //   state = 0;
+    // }
+    // else{
+      runningLCD();
+    //}
+
   }
 }
 
@@ -447,6 +506,10 @@ long unsigned int* LCD_controll::vtONGetter() {
     return valve_timer_on;
 }
 
+void LCD_controll::button_pr(){
+  button_p = false;
+}
+
 long unsigned int* LCD_controll::vtOFFGetter() {
     return valve_timer_off;
 }
@@ -459,8 +522,27 @@ bool LCD_controll::StateModeGetter(){
     return stateMode;
 }
 
+bool LCD_controll::stop(){
+  return stop_pressed;
+}
+
+bool LCD_controll::button_pressed(){
+    return button_p;
+}
+
 int* LCD_controll::ValveStateGetter(){
     return v_state;
+}
+
+void LCD_controll::reset(){
+  for(int i = 0; i<valves; i++){
+    valve_timer_off[i] = 0;
+    valve_timer_on[i] = 0;
+    v_state[i] = 0;
+    temp_v_state[i] = 0;
+    temp_valve_timer_off[i] = 0;
+    temp_valve_timer_on[i] = 0;
+  }
 }
 
 // void LCD_controll::tempValveStateSetter(){
