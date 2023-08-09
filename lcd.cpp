@@ -113,7 +113,7 @@ void LCD_controll::ValveControllON(int x, int y){
     lcd.setCursor(0,1);
     lcd.print("L-BACK");
     lcd.setCursor(8,1);
-    lcd.print("R-CONT");
+    lcd.print("R-NEXT");
 
     if(x==0 && y == 0){
 
@@ -155,7 +155,7 @@ void LCD_controll::ValveControllOFF(int x, int y){
     lcd.setCursor(0,1);
     lcd.print("L-BACK");
     lcd.setCursor(8,1);
-    lcd.print("R-STATE");
+    lcd.print("R-NEXT");
 
     if(x==0 && y == 0){
 
@@ -270,7 +270,9 @@ void LCD_controll::StateControll(int x, int y){
     stateMode=true;
     lcd.clear();
     lcd.setCursor(0,1);
-    lcd.print("SEL 2 START");
+    lcd.print("Sel-START");
+    lcd.setCursor(10,1);
+    lcd.print("R-HOME");
     lcd.setCursor(11,0);
 
     if(temp_v_state[state-5] == 1){
@@ -356,23 +358,33 @@ void LCD_controll::runningLCD(){
     lcd.print(valve_timer_on[0]);
     lcd.print("/");
     lcd.print(valve_timer_off[0]);
-    lcd.setCursor(7,0);
+    lcd.print(v_state[0]);
+
+    lcd.setCursor(9,0);
     lcd.print("V2=");
     lcd.print(valve_timer_on[1]);
     lcd.print("/");
     lcd.print(valve_timer_off[1]);
+    lcd.print("s");
+    lcd.print(v_state[1]);
+
     lcd.setCursor(0,1);
     lcd.print("V3=");
     lcd.print(valve_timer_on[2]);
     lcd.print("/");
     lcd.print(valve_timer_off[2]);
-    lcd.setCursor(7,1);
+    lcd.print("s");
+    lcd.print(v_state[2]);
+  
+    lcd.setCursor(9,1);
     lcd.print("V4=");
     lcd.print(valve_timer_on[3]);
     lcd.print("/");
     lcd.print(valve_timer_off[3]);
+    lcd.print("s");
+    lcd.print(v_state[3]);
     lcd.setCursor(13,1);
-    lcd.print("x-u ");
+    //lcd.print("x-u ");
 }
 
 
@@ -388,7 +400,7 @@ void LCD_controll::ReadRunning(int x){
     lcd.clear();
     initialCursor();
     startLCD();
-    
+
   }
   else if (x<400){
     //down
