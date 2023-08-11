@@ -12,8 +12,9 @@ void ValveMenu::MainMenu(){
     char menu_options[num_of_options][17] = {"> Valve Settings", "> Start Sampling"};
     while(true){
         if(Serial.available()){
+            Serial.print("heello");
             SerialCheck();
-            if(invalid = false)
+            if(invalid == false)
                 HandleGru();
         }        
         lcd.PrintBothLine("Main Menu", menu_options[cursor]);
@@ -117,6 +118,7 @@ void ValveMenu::ChangeValveSettingsMenu(int valve_num){
 void ValveMenu::SerialCheck(){
     int valve_index = 0;
     parse_data= Serial.readStringUntil('\n');
+    Serial.print(parse_data);
     if(parse_data == "Stop"){
         invalid = false;
     }
@@ -130,11 +132,15 @@ void ValveMenu::SerialCheck(){
         int state = 0;
         token = strtok(parseChar, " ");
         while(token!=NULL){
+            
             time_on = token[1] - '0';
             valve_index = token[0] - '0';
             time_off = token[2] - '0';
             state = token[3] - '0';
-            
+            Serial.println(valve_index);
+            Serial.println(time_on);
+            Serial.println(time_off);
+            Serial.println(state);
             if(valve_index > 3 || valve_index < 0 || state < 0 ||
                 state > 1 || time_off < 0 && time_on < 0)
                 invalid = true;
