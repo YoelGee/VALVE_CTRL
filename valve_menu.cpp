@@ -11,6 +11,8 @@ void ValveMenu::MainMenu(){
     int cursor = 0;
     char menu_options[num_of_options][17] = {"> Valve Settings", "> Start Sampling"};
     while(true){
+        if(Serial.available());
+            HandleGru();
         lcd.PrintBothLine("Main Menu", menu_options[cursor]);
         ButtonPressed pressed = UpdateMenuCursor(&cursor, num_of_options);
         if(pressed == Select || pressed == Right){
@@ -107,6 +109,31 @@ void ValveMenu::ChangeValveSettingsMenu(int valve_num){
         else if(pressed == Left) return;
         delay(MENU_DELAY);
     }
+}
+
+void ValveMenu::HandleGru(){
+    int valve_index = 0;
+    String parse_data = Serial.readStringUntil('\n');
+    if(parse_data == "Stop"){
+        stop = true;
+    }
+    else{
+        int length = parse_data.length();
+        char parseChar [length+1];
+        strcpy(parseChar, parse_data.c_str());
+        char* token;
+        token = strtok(parseChar, " ");
+        while(token!=NULL){
+            valve_index = token[0] - '0';
+            //Serial.println(token[0]);
+            for(int i = 0; i<3;i++)
+            ChangeValveSettings(valve_index, token[i+1]  - '0', i);
+            // Serial.println(valve_index);
+            // Serial.println(token);
+            token = strtok(NULL, " ");
+        }
+    }
+    Start();
 }
 
 void ValveMenu::ChangeValveSettings(int valve_num, int value, int on_off_state){
