@@ -116,7 +116,7 @@ void ValveMenu::ChangeValveSettingsMenu(int valve_num){
 
 void ValveMenu::SerialCheck(){
     int valve_index = 0;
-    String parse_data = Serial.readStringUntil('\n');
+    parse_data= Serial.readStringUntil('\n');
     if(parse_data == "Stop"){
         invalid = false;
     }
@@ -150,7 +150,6 @@ void ValveMenu::SerialCheck(){
 
 void ValveMenu::HandleGru(){
     int valve_index = 0;
-    String parse_data = Serial.readStringUntil('\n');
     if(parse_data == "Stop"){
         stop = true;
     }
