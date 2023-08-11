@@ -11,8 +11,11 @@ void ValveMenu::MainMenu(){
     int cursor = 0;
     char menu_options[num_of_options][17] = {"> Valve Settings", "> Start Sampling"};
     while(true){
-        if(Serial.available());
-            HandleGru();
+        if(Serial.available()){
+            SerialCheck();
+            if(invalid = false)
+                HandleGru();
+        }        
         lcd.PrintBothLine("Main Menu", menu_options[cursor]);
         ButtonPressed pressed = UpdateMenuCursor(&cursor, num_of_options);
         if(pressed == Select || pressed == Right){
@@ -111,6 +114,40 @@ void ValveMenu::ChangeValveSettingsMenu(int valve_num){
     }
 }
 
+void ValveMenu::SerialCheck(){
+    int valve_index = 0;
+    String parse_data = Serial.readStringUntil('\n');
+    if(parse_data == "Stop"){
+        invalid = false;
+    }
+    else{
+        int length = parse_data.length();
+        char parseChar [length+1];
+        strcpy(parseChar, parse_data.c_str());
+        char* token;
+        int time_on = 0;
+        int time_off = 0;
+        int state = 0;
+        token = strtok(parseChar, " ");
+        while(token!=NULL){
+            time_on = token[1] - '0';
+            valve_index = token[0] - '0';
+            //Serial.println(token[0]);
+            time_off = token[2] - '0';
+            state = token[3] - '0';
+            
+            if(valve_index > 3 || valve_index < 0 || state < 0 ||
+                state > 1 || time_off < 0 || time_on < 0){
+                invalid = true;
+            }
+            // Serial.println(valve_index);
+            // Serial.println(token);
+            token = strtok(NULL, " ");
+        }
+    }
+    Start();
+}
+
 void ValveMenu::HandleGru(){
     int valve_index = 0;
     String parse_data = Serial.readStringUntil('\n');
@@ -122,6 +159,9 @@ void ValveMenu::HandleGru(){
         char parseChar [length+1];
         strcpy(parseChar, parse_data.c_str());
         char* token;
+        int time_on = token[1] - '0';
+        int time_off = token[2] - '0';
+        int state = token[3] - '0';
         token = strtok(parseChar, " ");
         while(token!=NULL){
             valve_index = token[0] - '0';

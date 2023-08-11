@@ -10,6 +10,7 @@
 class ValveMenu{
 private:
     bool stop = false;
+    bool invalid = false;
     LCDScreen lcd;
     Relay valves[4];
     int valve_settings[4][3];//first element is valve # second element is setting. 0 - on time, 1 - off time, 2 - state
@@ -17,6 +18,7 @@ private:
     void ChangeValveSettingsMenu(int valve_num);
     void Start();
     void HandleGru();
+    void SerialCheck();
     ButtonPressed UpdateMenuCursor(int *cursor, int num_of_options);
 public:
     void MainMenu();
