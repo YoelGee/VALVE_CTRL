@@ -11,6 +11,8 @@ void ValveMenu::MainMenu(){
     int cursor = 0;
     char menu_options[num_of_options][17] = {"> Valve Settings", "> Start Sampling"};
     while(true){
+        if(Serial.available());
+            HandleGru();
         lcd.PrintBothLine("Main Menu", menu_options[cursor]);
         ButtonPressed pressed = UpdateMenuCursor(&cursor, num_of_options);
         if(pressed == Select || pressed == Right){
@@ -109,6 +111,31 @@ void ValveMenu::ChangeValveSettingsMenu(int valve_num){
     }
 }
 
+void ValveMenu::HandleGru(){
+    int valve_index = 0;
+    String parse_data = Serial.readStringUntil('\n');
+    if(parse_data == "Stop"){
+        stop = true;
+    }
+    else{
+        int length = parse_data.length();
+        char parseChar [length+1];
+        strcpy(parseChar, parse_data.c_str());
+        char* token;
+        token = strtok(parseChar, " ");
+        while(token!=NULL){
+            valve_index = token[0] - '0';
+            //Serial.println(token[0]);
+            for(int i = 0; i<3;i++)
+            ChangeValveSettings(valve_index, token[i+1]  - '0', i);
+            // Serial.println(valve_index);
+            // Serial.println(token);
+            token = strtok(NULL, " ");
+        }
+    }
+    Start();
+}
+
 void ValveMenu::ChangeValveSettings(int valve_num, int value, int on_off_state){
     valve_settings[valve_num][on_off_state] = value;
 }
@@ -129,43 +156,48 @@ ButtonPressed ValveMenu::UpdateMenuCursor(int *cursor, int num_of_options)
 }
 
 void ValveMenu::Start(){
-    char on_off_str[2][4] = {"Off", "On"};
-    int valve_cursor = 0;
-    int num_of_options = 3;
-    char first_line[17];
-    char second_line[17];
-    ButtonPressed pressed = NotPressed;
-    long unsigned int start[4];
-    for(int i = 0; i < 4; i++){
-        if(valve_settings[i][2] == 0){
-            valves[i].TurnRelayOff();
-        }
-        else{
-            valves[i].TurnRelayOn();
-        }
-        start[i] = millis() + 60000 * valve_settings[i][valve_settings[i][2]];
-    }
-    long unsigned int current = millis();
-    while(true){
-        int time_remaining_first = (start[valve_cursor] - current) / 60000 + 1;
-        int time_remaining_second = (start[valve_cursor + 1] - current) / 60000 + 1;
-        sprintf(first_line, "Valve%d %d min %s", valve_cursor + 1, time_remaining_first, on_off_str[valve_settings[valve_cursor][2]]); 
-        sprintf(second_line, "Valve%d %d min %s", valve_cursor + 2, time_remaining_second, on_off_str[valve_settings[valve_cursor + 1][2]]); 
-        lcd.PrintBothLine(first_line, second_line);
-        pressed = UpdateMenuCursor(&valve_cursor, num_of_options);
-        Serial.println("Still running");
+        char on_off_str[2][4] = {"Off", "On"};
+        int valve_cursor = 0;
+        int num_of_options = 3;
+        char first_line[17];
+        char second_line[17];
+        ButtonPressed pressed = NotPressed;
+        long unsigned int start[4];
         for(int i = 0; i < 4; i++){
-            Serial.print("Valve #");
-            Serial.println(valve_cursor + 1);
-            if(!valve_settings[i][valve_settings[i][2]]) continue;
-            if(current > start[i]){
-                valves[i].SwitchRelayState();
-                valve_settings[i][2] = !valve_settings[i][2];
-                start[i] = millis() + 60000 * valve_settings[i][valve_settings[i][2]];
+            if(valve_settings[i][2] == 0){
+                valves[i].TurnRelayOff();
             }
+            else{
+                valves[i].TurnRelayOn();
+            }
+            start[i] = millis() + 60000 * valve_settings[i][valve_settings[i][2]];
         }
-        current = millis();
-        delay(MENU_DELAY);
+        long unsigned int current = millis();
+        while(true){
+            if(stop){
+                for(int i = 0; i < 4; i++)
+                    ChangeValveSettings(i, 0, 0 );
+                return;
+            }
+            else{
+
+                int time_remaining_first = (start[valve_cursor] - current) / 60000 + 1;
+                int time_remaining_second = (start[valve_cursor + 1] - current) / 60000 + 1;
+                sprintf(first_line, "Valve%d %d min %s", valve_cursor + 1, time_remaining_first, on_off_str[valve_settings[valve_cursor][2]]); 
+                sprintf(second_line, "Valve%d %d min %s", valve_cursor + 2, time_remaining_second, on_off_str[valve_settings[valve_cursor + 1][2]]); 
+                lcd.PrintBothLine(first_line, second_line);
+                pressed = UpdateMenuCursor(&valve_cursor, num_of_options);
+                for(int i = 0; i < 4; i++){
+                    if(!valve_settings[i][valve_settings[i][2]]) continue;
+                    if(current > start[i]){
+                        valves[i].SwitchRelayState();
+                        valve_settings[i][2] = !valve_settings[i][2];
+                        start[i] = millis() + 60000 * valve_settings[i][valve_settings[i][2]];
+                    }
+                }
+                current = millis();
+                delay(MENU_DELAY - 100);
+            }
     }
 }
 
