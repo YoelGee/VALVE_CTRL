@@ -145,7 +145,6 @@ void ValveMenu::SerialCheck(){
             token = strtok(NULL, " ");
         }
     }
-    Start();
 }
 
 void ValveMenu::HandleGru(){
@@ -158,9 +157,6 @@ void ValveMenu::HandleGru(){
         char parseChar [length+1];
         strcpy(parseChar, parse_data.c_str());
         char* token;
-        int time_on = token[1] - '0';
-        int time_off = token[2] - '0';
-        int state = token[3] - '0';
         token = strtok(parseChar, " ");
         while(token!=NULL){
             valve_index = token[0] - '0';
