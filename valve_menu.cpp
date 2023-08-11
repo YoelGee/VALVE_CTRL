@@ -132,14 +132,12 @@ void ValveMenu::SerialCheck(){
         while(token!=NULL){
             time_on = token[1] - '0';
             valve_index = token[0] - '0';
-            //Serial.println(token[0]);
             time_off = token[2] - '0';
             state = token[3] - '0';
             
             if(valve_index > 3 || valve_index < 0 || state < 0 ||
-                state > 1 || time_off < 0 || time_on < 0){
+                state > 1 || time_off < 0 && time_on < 0)
                 invalid = true;
-            }
             // Serial.println(valve_index);
             // Serial.println(token);
             token = strtok(NULL, " ");
@@ -167,8 +165,8 @@ void ValveMenu::HandleGru(){
             // Serial.println(token);
             token = strtok(NULL, " ");
         }
+        Start();
     }
-    Start();
 }
 
 void ValveMenu::ChangeValveSettings(int valve_num, int value, int on_off_state){
