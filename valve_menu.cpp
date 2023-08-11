@@ -153,7 +153,10 @@ void ValveMenu::Start(){
         sprintf(second_line, "Valve%d %d min %s", valve_cursor + 2, time_remaining_second, on_off_str[valve_settings[valve_cursor + 1][2]]); 
         lcd.PrintBothLine(first_line, second_line);
         pressed = UpdateMenuCursor(&valve_cursor, num_of_options);
+        Serial.println("Still running");
         for(int i = 0; i < 4; i++){
+            Serial.print("Valve #");
+            Serial.println(valve_cursor + 1);
             if(!valve_settings[i][valve_settings[i][2]]) continue;
             if(current > start[i]){
                 valves[i].SwitchRelayState();
@@ -162,7 +165,7 @@ void ValveMenu::Start(){
             }
         }
         current = millis();
-        delay(MENU_DELAY - 100);
+        delay(MENU_DELAY);
     }
 }
 
