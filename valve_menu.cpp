@@ -228,9 +228,8 @@ void ValveMenu::Start(){
                 return;
             }
             else{
-
-                int time_remaining_first = (start[valve_cursor] - current) / 60000 + 1;
-                int time_remaining_second = (start[valve_cursor + 1] - current) / 60000 + 1;
+                int time_remaining_first = (!valve_settings[valve_cursor][valve_settings[valve_cursor][2]]) ? 0 : (start[valve_cursor] - current) / 60000 + 1;
+                int time_remaining_second = (!valve_settings[valve_cursor + 1][valve_settings[valve_cursor + 1][2]]) ? 0 : (start[valve_cursor + 1] - current) / 60000 + 1;
                 //int time_remaining_first = 0;
                 //int time_remaining_second = 0;
                 sprintf(first_line, "V%d %dmin %s", valve_cursor + 1, time_remaining_first, on_off_str[valve_settings[valve_cursor][2]]); 
