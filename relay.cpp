@@ -22,14 +22,14 @@ int Relay::GetRelayStatus(){
 
 void Relay::TurnRelayOn(){
     if(relay_status == off){
-        digitalWrite(relay_pin, !LOW);
+        digitalWrite(relay_pin, LOW);
         relay_status = on;
     }
     
 }
 void Relay::TurnRelayOff(){
     if(relay_status == on){
-        digitalWrite(relay_pin, !HIGH);
+        digitalWrite(relay_pin, HIGH);
         relay_status = off;
     }
     
@@ -37,11 +37,11 @@ void Relay::TurnRelayOff(){
 void Relay::SwitchRelayState(){
     if(relay_status){
         relay_status = off;
-        digitalWrite(relay_pin,!HIGH);
+        digitalWrite(relay_pin,HIGH);
     }
     else{
         relay_status = on;
-        digitalWrite(relay_pin, !LOW);
+        digitalWrite(relay_pin, LOW);
 
     }
 }
