@@ -12,9 +12,10 @@ void ValveMenu::MainMenu(){
     char menu_options[num_of_options][17] = {"> Valve Settings", "> Start Sampling"};
     while(true){
         if(Serial.available()){
-            // Serial.print("heello");
-            // SerialCheck();
-            // if(invalid == false)
+            invalid = false;
+            Serial.print("Inside MAIN MENU");
+            SerialCheck();
+            if(invalid == false)
                 HandleGru();
         }        
         lcd.PrintBothLine("Main Menu", menu_options[cursor]);
@@ -119,7 +120,7 @@ void ValveMenu::SerialCheck(){
     int valve_index = 0;
     parse_data= Serial.readStringUntil('\n');
     parse_data.trim();
-    Serial.print(parse_data);
+    Serial.println(parse_data);
     if(parse_data == "stop"){
         Serial.println("In serialcheck stop");
         invalid = false;
@@ -129,27 +130,41 @@ void ValveMenu::SerialCheck(){
         char parseChar [length+1];
         strcpy(parseChar, parse_data.c_str());
         char* token;
+        int token_counter = 0;
         int time_on = 0;
         int time_off = 0;
         int state = 0;
-        token = strtok(parseChar, " ");
+        token = strtok(parseChar, " ,");
         while(token!=NULL){
-            
-            time_on = token[1] - '0';
-            valve_index = token[0] - '0';
-            time_off = token[2] - '0';
-            state = token[3] - '0';
-            Serial.print(valve_index);
-            Serial.print(time_on);
-            Serial.print(time_off);
-            Serial.println(state);
-            if(valve_index > 3 || valve_index < 0 || state < 0 ||
-                state > 1 || time_off < 0 && time_on < 0)
-                invalid = true;
-            // Serial.println(valve_index);
-            // Serial.println(token);
-            token = strtok(NULL, " ");
+            switch (token_counter)
+            {
+            case 0 :
+                valve_index = atoi(token);
+                break;
+            case 1:
+                time_off = atoi(token);
+                break;
+            case 2:
+                time_on = atoi(token);
+                break;
+            case 3:
+                state = atoi(token);
+                break;
+            default:
+                break;
+            }
+            token_counter++;
+            if(token_counter > 3){
+                token_counter = 0;
+                if(valve_index > 3 || valve_index < 0 || state < 0 ||
+                    state > 1 || time_off < 0 || time_off > 20 || time_on < 0 || time_on > 20)
+                    invalid = true;
+            }
+            //Serial.println(valve_index);
+            //Serial.println(token);
+            token = strtok(NULL, " ,");
         }
+        Serial.println(invalid);
     }
 }
 
@@ -160,8 +175,6 @@ void ValveMenu::HandleGru(){
     int time_off = 0;
     int time_on = 0;
     int state = 0;
-    parse_data= Serial.readStringUntil('\n');
-    parse_data.trim();
     if(parse_data == "stop"){
         Serial.println("Stop command received");
         stop = true;
