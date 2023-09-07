@@ -12,9 +12,9 @@ void ValveMenu::MainMenu(){
     char menu_options[num_of_options][17] = {"> Valve Settings", "> Start Sampling"};
     while(true){
         if(Serial.available()){
-            Serial.print("heello");
-            SerialCheck();
-            if(invalid == false)
+            // Serial.print("heello");
+            // SerialCheck();
+            // if(invalid == false)
                 HandleGru();
         }        
         lcd.PrintBothLine("Main Menu", menu_options[cursor]);
@@ -155,6 +155,13 @@ void ValveMenu::SerialCheck(){
 
 void ValveMenu::HandleGru(){
     int valve_index = 0;
+    int token_counter = 0;
+    int valve_counter = 4;
+    int time_off = 0;
+    int time_on = 0;
+    int state = 0;
+    parse_data= Serial.readStringUntil('\n');
+    parse_data.trim();
     if(parse_data == "stop"){
         Serial.println("Stop command received");
         stop = true;
@@ -164,16 +171,45 @@ void ValveMenu::HandleGru(){
         char parseChar [length+1];
         strcpy(parseChar, parse_data.c_str());
         char* token;
-        token = strtok(parseChar, " ");
+        Serial.println(parse_data);
+        token = strtok(parseChar, " ,");
         while(token!=NULL){
-            valve_index = token[0] - '0';
-            //Serial.println(token[0]);
-            for(int i = 0; i<3;i++)
-            ChangeValveSettings(valve_index, token[i+1]  - '0', i);
-            // Serial.println(valve_index);
+
             // Serial.println(token);
-            token = strtok(NULL, " ");
+            switch (token_counter)
+            {
+            case 0:
+                valve_index = atoi(token);
+                 break;
+            case 1:
+                time_off = atoi(token);
+                 break;
+            case 2:
+                time_on = atoi(token);
+                 break;
+            case 3:
+                state = atoi(token);
+                 break;
+            default:
+                 continue;
+            }
+            // Serial.println(valve_index);
+            // Serial.println(time_off);
+            // Serial.println(time_on);
+            token_counter++;
+
+            if(token_counter > 3)
+            {
+                ChangeValveSettings(valve_index, time_off, 0);
+                ChangeValveSettings(valve_index, time_on, 1);
+                ChangeValveSettings(valve_index, state, 2);
+                valve_counter++;
+                token_counter = 0;
+            }
+
+            token = strtok(NULL, " ,");
         }
+
         Start();
     }
 }
@@ -228,8 +264,10 @@ void ValveMenu::Start(){
                 return;
             }
             else{
-                int time_remaining_first = (!valve_settings[valve_cursor][valve_settings[valve_cursor][2]]) ? 0 : (start[valve_cursor] - current) / 60000 + 1;
-                int time_remaining_second = (!valve_settings[valve_cursor + 1][valve_settings[valve_cursor + 1][2]]) ? 0 : (start[valve_cursor + 1] - current) / 60000 + 1;
+
+                int time_remaining_first = (start[valve_cursor] - current) / 60000 + 1;
+                int time_remaining_second = (start[valve_cursor + 1] - current) / 60000 + 1;
+                //Serial.println(start[valve_cursor] - current);
                 //int time_remaining_first = 0;
                 //int time_remaining_second = 0;
                 sprintf(first_line, "V%d %dmin %s", valve_cursor + 1, time_remaining_first, on_off_str[valve_settings[valve_cursor][2]]); 
