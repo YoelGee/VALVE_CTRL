@@ -161,7 +161,7 @@ void ValveMenu::SerialCheck(){
                     invalid = true;
             }
             //Serial.println(valve_index);
-            //Serial.println(token);
+            Serial.println(token);
             token = strtok(NULL, " ,");
         }
         Serial.println(invalid);
@@ -250,6 +250,8 @@ void ValveMenu::Start(){
         char on_off_str[2][4] = {"Off", "On"};
         int valve_cursor = 0;
         int num_of_options = 3;
+        int time_remaining_first;
+        int time_remaining_second;
         char first_line[17];
         char second_line[17];
         ButtonPressed pressed = NotPressed;
@@ -261,7 +263,12 @@ void ValveMenu::Start(){
             else{
                 valves[i].TurnRelayOn();
             }
-            start[i] = millis() + 60000 * valve_settings[i][valve_settings[i][2]];
+            if(valve_settings[i][valve_settings[i][2]] > 0)
+                start[i] = millis() + 60000 * valve_settings[i][valve_settings[i][2]];
+            else 
+                start[i] = 0;
+            //Serial.println(valve_settings[i][valve_settings[i][2]]);
+            Serial.println(start[i]);
         }
         long unsigned int current = millis();
         while(true){
@@ -278,8 +285,14 @@ void ValveMenu::Start(){
             }
             else{
 
-                int time_remaining_first = (start[valve_cursor] - current) / 60000 + 1;
-                int time_remaining_second = (start[valve_cursor + 1] - current) / 60000 + 1;
+                if(start[valve_cursor] != 0)
+                    time_remaining_first = (start[valve_cursor] - current) / 60000 + 1;
+                else
+                    time_remaining_first = 0;
+                if(start[valve_cursor+1] != 0)
+                    time_remaining_second = (start[valve_cursor + 1] - current) / 60000 + 1;
+                else
+                    time_remaining_second = 0;
                 //Serial.println(start[valve_cursor] - current);
                 //int time_remaining_first = 0;
                 //int time_remaining_second = 0;
