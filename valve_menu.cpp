@@ -256,6 +256,10 @@ void ValveMenu::Start(){
         char second_line[17];
         ButtonPressed pressed = NotPressed;
         long unsigned int start[4];
+        int valve_time_remaining[4][4] = {{0,valve_settings[0][0],valve_settings[0][1],valve_settings[0][2]}, 
+                                          {1,valve_settings[1][0],valve_settings[1][1],valve_settings[0][2]},
+                                          {2,valve_settings[2][0],valve_settings[2][1],valve_settings[0][2]},
+                                          {3,valve_settings[3][0],valve_settings[3][1],valve_settings[0][2]}};
         for(int i = 0; i < 4; i++){
             if(valve_settings[i][2] == 0){
                 valves[i].TurnRelayOff();
@@ -271,6 +275,7 @@ void ValveMenu::Start(){
             Serial.println(start[i]);
         }
         long unsigned int current = millis();
+        long unsigned int start_gru = millis();
         while(true){
             if(Serial.available()){
                 SerialCheck();
@@ -284,15 +289,37 @@ void ValveMenu::Start(){
                 return;
             }
             else{
-
-                if(start[valve_cursor] != 0)
-                    time_remaining_first = (start[valve_cursor] - current) / 60000 + 1;
-                else
-                    time_remaining_first = 0;
-                if(start[valve_cursor+1] != 0)
-                    time_remaining_second = (start[valve_cursor + 1] - current) / 60000 + 1;
-                else
-                    time_remaining_second = 0;
+                for(int i = 0; i < 4; i++){
+                    if(!valve_settings[i][2]){
+                        valve_time_remaining[i][1] = (start[i] == 0) ? 0 : (start[i] - current) / 60000 + 1;
+                        valve_time_remaining[i][2] = valve_settings[i][1];
+                    }
+                    else{
+                        valve_time_remaining[i][1] = valve_settings[i][0];
+                        valve_time_remaining[i][2] = (start[i] == 0) ? 0 : (start[i] - current) / 60000 + 1;
+                    }
+                    valve_time_remaining[i][3] = valve_settings[i][2];
+                }
+                if(current - start_gru > 1000){
+                    char buff[30];
+                    sprintf(buff, "%d,%d,%d,%d %d,%d,%d,%d %d,%d,%d,%d %d,%d,%d,%d", 
+                                0, valve_time_remaining[0][1], valve_time_remaining[0][2], valve_time_remaining[0][3],
+                                1, valve_time_remaining[1][1], valve_time_remaining[1][2], valve_time_remaining[1][3],
+                                2, valve_time_remaining[2][1], valve_time_remaining[2][2], valve_time_remaining[2][3],
+                                3, valve_time_remaining[3][1], valve_time_remaining[3][2], valve_time_remaining[3][3]);
+                    Serial.println(buff);
+                    start_gru = current;
+                }
+                time_remaining_first = valve_time_remaining[valve_cursor][valve_settings[valve_cursor][3]];
+                time_remaining_second = valve_time_remaining[valve_cursor + 1][valve_settings[valve_cursor + 1][3]];
+                // if(start[valve_cursor] != 0)
+                //     time_remaining_first = (start[valve_cursor] - current) / 60000 + 1;
+                // else
+                //     time_remaining_first = 0;
+                // if(start[valve_cursor+1] != 0)
+                //     time_remaining_second = (start[valve_cursor + 1] - current) / 60000 + 1;
+                // else
+                //     time_remaining_second = 0;
                 //Serial.println(start[valve_cursor] - current);
                 //int time_remaining_first = 0;
                 //int time_remaining_second = 0;
