@@ -11,6 +11,7 @@ class ValveMenu{
 private:
     bool stop = false;
     bool invalid = false;
+    bool start = false;
     String parse_data;
     LCDScreen lcd;
     Relay valves[4];

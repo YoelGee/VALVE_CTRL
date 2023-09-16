@@ -125,6 +125,10 @@ void ValveMenu::SerialCheck(){
         Serial.println("In serialcheck stop");
         invalid = false;
     }
+    else if(parse_data == "start"){
+        start = true;
+        invalid = false;
+    }
     else{
         int length = parse_data.length();
         char parseChar [length+1];
@@ -161,7 +165,7 @@ void ValveMenu::SerialCheck(){
                     invalid = true;
             }
             //Serial.println(valve_index);
-            Serial.println(token);
+            //Serial.println(token);
             token = strtok(NULL, " ,");
         }
         Serial.println(invalid);
@@ -179,12 +183,15 @@ void ValveMenu::HandleGru(){
         Serial.println("Stop command received");
         stop = true;
     }
+    else if(start){
+        Start();
+    }
     else{
         int length = parse_data.length();
         char parseChar [length+1];
         strcpy(parseChar, parse_data.c_str());
         char* token;
-        Serial.println(parse_data);
+        //Serial.println(parse_data);
         token = strtok(parseChar, " ,");
         while(token!=NULL){
 
@@ -223,7 +230,6 @@ void ValveMenu::HandleGru(){
             token = strtok(NULL, " ,");
         }
 
-        Start();
     }
 }
 
@@ -294,7 +300,8 @@ void ValveMenu::Start(){
                 else
                     time_remaining_second = 0;
                 //Serial.println(start[valve_cursor] - current);
-                //int time_remaining_first = 0;
+                //int time_remaining_first = 0; 
+                
                 //int time_remaining_second = 0;
                 sprintf(first_line, "V%d %dmin %s", valve_cursor + 1, time_remaining_first, on_off_str[valve_settings[valve_cursor][2]]); 
                 sprintf(second_line, "V%d %dmin %s", valve_cursor + 2, time_remaining_second, on_off_str[valve_settings[valve_cursor + 1][2]]); 
